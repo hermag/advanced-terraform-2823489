@@ -6,7 +6,7 @@ variable "aws_access_key" {}
 variable "aws_secret_key" {}
 
 variable "region" {
-  default = "us-east-2"
+  default = "eu-central-1"
 }
 
 variable "vpc_cidr" {
@@ -40,6 +40,11 @@ variable "environment_instance_type" {
     "STAGE" = "t2.micro",
     "PROD" = "t2.micro"
   }
+}
+
+variable "deploy_environment" {
+  type = map(string)
+  default = {"env"="DEV"}
 }
 
 variable "environment_instance_settings" {
@@ -148,8 +153,8 @@ resource "aws_instance" "nodejs1" {
 
   monitoring = var.environment_instance_settings["PROD"].monitoring
 
-  tags = {Environment = var.environment_list[0]}
-
+  #tags = {Environment = var.environment_list[0]}
+  tags = {Environment = var.environment_map[var.deploy_environment.env]}
 }
 
 # //////////////////////////////
@@ -186,4 +191,8 @@ output "instance-dns" {
 
 output "private-dns" {
   value = aws_instance.nodejs1.private_dns
+}
+
+output "some-variable" {
+  value = "The test variable"
 }
