@@ -9,9 +9,7 @@ variable "ssh_key_name" {}
 
 variable "private_key_path" {}
 
-variable "region" {
-  default = "us-east-2"
-}
+variable "region" {}
 
 variable "vpc_cidr" {
   default = "172.16.0.0/16"
@@ -104,6 +102,7 @@ resource "aws_security_group" "sg-nodejs-instance" {
 
 # INSTANCE
 resource "aws_instance" "nodejs1" {
+  count = 5
   ami = data.aws_ami.aws-linux.id
   instance_type = "t2.micro"
   subnet_id = aws_subnet.subnet1.id
@@ -150,5 +149,5 @@ data "aws_ami" "aws-linux" {
 # OUTPUT
 # //////////////////////////////
 output "instance-dns" {
-  value = aws_instance.nodejs1.public_dns
+  value = aws_instance.*.public_dns
 }
